@@ -18,6 +18,15 @@ trait JsReadable extends Any {
   def asOpt[T](implicit fjs: Reads[T]): Option[T] = validate(fjs).asOpt
 
   /**
+   * Tries to convert the node into a T. An implicit Reads[T] must be defined.
+   * Any error is mapped to the fallback value `orElse`.
+   *
+   * @param orElse The fallback value if the mapping fails.
+   * @return T if it succeeds, `orElse` if it fails.
+   */
+  def asOrElse[T](orElse: => T)(implicit fjs: Reads[T]): T = validate[T].getOrElse(elseValue)
+
+  /**
    * Tries to convert the node into a T, throwing an exception if it can't. An implicit Reads[T] must be defined.
    */
   def as[T](implicit fjs: Reads[T]): T = validate(fjs).fold(
